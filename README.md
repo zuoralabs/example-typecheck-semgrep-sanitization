@@ -35,6 +35,13 @@ Having a stricter type checker can make some of the semgrep rules redundant.
 These metrics can be obtained from semgrep.
 
 
+## Caveats
+
+Note that this technique will not prevent the combining of literal strings with sanitized strings to create dangerous strings. To mitigate this possibility, one can require that
+when combining literal strings with sanitized strings, the output be passed through a blessed 
+sanitization function.
+
+
 ## TODO
 
 Turn semgrep output into easily presentable metrics.
