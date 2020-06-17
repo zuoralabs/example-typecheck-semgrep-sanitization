@@ -38,3 +38,8 @@ These metrics can be obtained from semgrep.
 ## TODO
 
 Turn semgrep output into easily presentable metrics.
+
+
+## Future
+
+This technique can be extended to include authz policies. See the Rocket framework.
