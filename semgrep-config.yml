@@ -1,0 +1,67 @@
+rules:
+  - id: literal-str-is-literal
+    patterns:
+      - pattern-not: |
+          my_sanitization_lib.LiteralStr("...")
+      - pattern: |
+          my_sanitization_lib.LiteralStr(...)
+    message: |
+      LiteralStr should only be called on a literal string.
+
+    languages: [python]
+    severity: ERROR
+
+  - id: sorry-fake-sanitize-usage
+    patterns:
+      - pattern: |
+          my_sanitization_lib.sorry_fake_sanitize(...)
+    message: |
+      Avoid `sorry_fake_sanitize`.
+
+    languages: [python]
+    severity: WARNING
+
+  - id: base-app-route-usage
+    pattern-either:
+      - patterns:
+        - pattern: |
+            $APP = flask.Flask(...)
+            ...
+            @$APP.route($ROUTE, ...)
+            def $FUNC(...):
+                ...
+      - patterns:
+        - pattern: |
+            @$APP.route($ROUTE, ...)
+            def $FUNC(...):
+              ...
+
+    message: |
+      Avoid using `flask.Flask.route` decorator directly. Use safe_route instead.
+    fix: |
+      safe_route($APP, $ROUTE)
+    languages: [python]
+    severity: WARNING
+
+  - id: sanitized-type-usage
+    patterns:
+      - pattern-not: |
+          my_sanitization_lib.HtmlSanitizedStr(html.escape(...))
+      - pattern: |
+          my_sanitization_lib.HtmlSanitizedStr(...)
+    message: |
+      Do not use `my_sanitization_lib.HtmlSanitized` outside of blessed library.
+    languages: [python]
+    severity: ERROR
+
+# This won't work because semgrep doesn't appear to have a type checker.
+#
+#  - id: double-sanitization
+#    patterns:
+#      - pattern: |
+#          my_sanitization_lib.sanitize_for_html($STR)
+#      - pattern-where-python: "isinstance($STR, __import__('my_sanitization_lib').HtmlSanitizedStr)"
+#    message: |
+#      Double sanitization. VARS['$STR']
+#    languages: [python]
+#    severity: WARNING
